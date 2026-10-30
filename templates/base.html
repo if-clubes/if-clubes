@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#174a37">
+    <title>{% block title %}IF Clubes | IFRN Ceará-Mirim{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" href="{{ url_for('index') }}" aria-label="IF Clubes, início">
+                <span class="brand__mark" aria-hidden="true">IF</span>
+                <span class="brand__text"><strong>IF Clubes</strong><small>IFRN · Campus Ceará-Mirim</small></span>
+            </a>
+            <nav class="main-nav" aria-label="Navegação principal">
+                <a class="main-nav__link {% if request.endpoint in ['list_clubs', 'club_detail', 'create_club', 'edit_club'] %}is-active{% endif %}" href="{{ url_for('list_clubs') }}">Clubes</a>
+                <a class="main-nav__link {% if request.endpoint in ['list_events', 'create_event'] %}is-active{% endif %}" href="{{ url_for('list_events') }}">Eventos</a>
+                {% if session.get('usuario_id') %}
+                    {% if session.get('tipo') == 'responsavel' %}
+                        <a class="main-nav__link main-nav__link--subtle" href="{{ url_for('create_club') }}">Novo clube</a>
+                        <a class="main-nav__link main-nav__link--subtle" href="{{ url_for('create_event') }}">Novo evento</a>
+                    {% endif %}
+                    <span class="user-chip"><span class="user-chip__dot"></span>{{ session.get('nome') }}</span>
+                    <form class="nav-form" action="{{ url_for('logout') }}" method="post"><button class="button button--small button--outline" type="submit">Sair</button></form>
+                {% else %}
+                    <a class="main-nav__link" href="{{ url_for('login') }}">Entrar</a>
+                    <a class="button button--small button--green" href="{{ url_for('register_user') }}">Criar conta</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <main class="page-shell">{% block content %}{% endblock %}</main>
+    <footer class="site-footer">
+        <div class="site-footer__inner"><strong>IF Clubes</strong><span>IFRN · Campus Ceará-Mirim · Rio Grande do Norte</span></div>
+    </footer>
+</body>
+</html>

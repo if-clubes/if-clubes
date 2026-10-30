@@ -1,29 +1,41 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IF Clubes</title>
-</head>
-<body>
-    <main>
-        <h1>IF Clubes</h1>
-        <p>Encontre clubes e grupos de interesse do IFRN.</p>
-        <p><a href="{{ url_for('list_clubs') }}">Explorar clubes</a></p>
-        <p><a href="{{ url_for('list_events') }}">Ver eventos</a></p>
-        {% if session.get('usuario_id') %}
-            <p>Olá, {{ session.get('nome') }}.</p>
+{% extends "base.html" %}
+
+{% block title %}Início | IF Clubes{% endblock %}
+
+{% block content %}
+    <section class="home-hero">
+        <div class="home-hero__copy">
+            <span class="eyebrow eyebrow--light">IFRN · CAMPUS CEARÁ-MIRIM</span>
+            <h1>Ideias que encontram espaço.</h1>
+            <p>Descubra os clubes do campus, acompanhe eventos e encontre gente que compartilha seus interesses.</p>
+            <div class="action-row">
+                <a class="button button--lime" href="{{ url_for('list_clubs') }}">Explorar clubes <span aria-hidden="true">↗</span></a>
+                <a class="button button--outline button--on-dark" href="{{ url_for('list_events') }}">Ver eventos</a>
+            </div>
+        </div>
+        <div class="home-hero__aside">
+            <span class="hero-aside__label">Comunidade em movimento</span>
+            <span class="hero-aside__mark" aria-hidden="true">CM</span>
+            <span class="hero-aside__campus"><span>IFRN</span><span>CEARÁ-MIRIM · RN</span></span>
+        </div>
+    </section>
+
+    {% if session.get('usuario_id') %}
+        <p class="welcome-line"><span class="welcome-line__accent"></span>Bem-vindo(a), <strong>{{ session.get('nome') }}</strong>.</p>
+    {% endif %}
+
+    <section aria-labelledby="atalhos-title">
+        <div class="section-heading">
+            <div><span class="eyebrow">NO CAMPUS</span><h2 id="atalhos-title">O que está acontecendo</h2></div>
+            <p>Clubes, encontros e atividades do IFRN Ceará-Mirim.</p>
+        </div>
+        <div class="quick-grid">
+            <a class="quick-link" href="{{ url_for('list_clubs') }}"><span class="quick-link__number">01</span><span class="quick-link__text"><strong>Clubes</strong><small>Conheça os grupos do campus</small></span></a>
+            <a class="quick-link" href="{{ url_for('list_events') }}"><span class="quick-link__number">02</span><span class="quick-link__text"><strong>Eventos</strong><small>Veja os próximos encontros</small></span></a>
             {% if session.get('tipo') == 'responsavel' %}
-                <p><a href="{{ url_for('create_club') }}">Cadastrar clube</a></p>
-                <p><a href="{{ url_for('create_event') }}">Cadastrar evento</a></p>
+                <a class="quick-link" href="{{ url_for('create_club') }}"><span class="quick-link__number">03</span><span class="quick-link__text"><strong>Novo clube</strong><small>Adicione um grupo ao campus</small></span></a>
+                <a class="quick-link" href="{{ url_for('create_event') }}"><span class="quick-link__number">04</span><span class="quick-link__text"><strong>Novo evento</strong><small>Divulgue uma atividade</small></span></a>
             {% endif %}
-            <form action="{{ url_for('logout') }}" method="post">
-                <button type="submit">Sair</button>
-            </form>
-        {% else %}
-            <a href="{{ url_for('login') }}">Entrar</a>
-            <a href="{{ url_for('register_user') }}">Criar uma conta</a>
-        {% endif %}
-    </main>
-</body>
-</html>
+        </div>
+    </section>
+{% endblock %}

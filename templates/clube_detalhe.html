@@ -1,59 +1,50 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ clube.nome }} | IF Clubes</title>
-</head>
-<body>
-    <main>
-        <p><a href="{{ url_for('list_clubs') }}">Voltar para clubes</a></p>
-        <h1>{{ clube.nome }}</h1>
-        <p>{{ clube.descricao }}</p>
-        <p>Categoria: {{ clube.categoria }}</p>
-        <p>Local: {{ clube.local }}</p>
-        <p>Encontros: {{ clube.horarios }}</p>
-        <p>Responsável: {{ clube.responsavel }}</p>
+{% extends "base.html" %}
 
-        <section>
-            <h2>Publicações</h2>
-            {% if session.get('usuario_id') == clube.responsavel_id %}
-                <form action="{{ url_for('create_post', club_id=clube.id) }}" method="post">
-                    <label for="conteudo-publicacao">Nova publicação</label>
-                    <textarea id="conteudo-publicacao" name="conteudo" maxlength="5000" required></textarea>
-                    <button type="submit">Publicar</button>
-                </form>
-            {% endif %}
+{% block title %}{{ clube.nome }} | IF Clubes{% endblock %}
 
-            {% if not publicacoes %}
-                <p>Ainda não há publicações neste clube.</p>
-            {% else %}
-                {% for publicacao in publicacoes %}
-                    <article>
-                        <p>{{ publicacao.conteudo }}</p>
-                        <p>Por {{ publicacao.autor }} em {{ publicacao.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+{% block content %}
+    <a class="back-link" href="{{ url_for('list_clubs') }}">← Voltar para clubes</a>
+    <section class="club-detail-banner">
+        <div>
+            <p class="club-detail-banner__label">{{ clube.categoria }} · IFRN Ceará-Mirim</p>
+            <h1>{{ clube.nome }}</h1>
+            <p>{{ clube.descricao }}</p>
+        </div>
+        <div class="club-detail-facts"><span class="tag">{{ clube.local }}</span><span class="tag tag--gold">{{ clube.horarios }}</span></div>
+    </section>
+    <p class="post-meta">Responsável: {{ clube.responsavel }}</p>
 
-                        <h3>Comentários</h3>
+    <section class="feed-section" aria-labelledby="publicacoes-title">
+        <div class="section-heading"><div><span class="eyebrow">MURAL DO CLUBE</span><h2 id="publicacoes-title">Publicações</h2></div></div>
+        {% if session.get('usuario_id') == clube.responsavel_id %}
+            <form class="feed-composer" action="{{ url_for('create_post', club_id=clube.id) }}" method="post">
+                <label for="conteudo-publicacao">Compartilhe uma novidade</label>
+                <textarea id="conteudo-publicacao" name="conteudo" maxlength="5000" required placeholder="Escreva para o seu clube..."></textarea>
+                <button type="submit">Publicar</button>
+            </form>
+        {% endif %}
+        {% if not publicacoes %}
+            <p class="empty-state">Ainda não há publicações neste clube.</p>
+        {% else %}
+            {% for publicacao in publicacoes %}
+                <article class="post-card">
+                    <p class="post-card__content">{{ publicacao.conteudo }}</p>
+                    <p class="post-meta">{{ publicacao.autor }} · {{ publicacao.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+                    <h3>Comentários</h3>
+                    <ul class="comment-list">
                         {% for comentario in comentarios_por_publicacao[publicacao.id] %}
-                            <p>{{ comentario.conteudo }}</p>
-                            <p>Por {{ comentario.autor }} em {{ comentario.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
-                        {% else %}
-                            <p>Sem comentários.</p>
-                        {% endfor %}
-
-                        {% if session.get('usuario_id') %}
-                            <form action="{{ url_for('create_comment', post_id=publicacao.id) }}" method="post">
-                                <label for="comentario-{{ publicacao.id }}">Adicionar comentário</label>
-                                <textarea id="comentario-{{ publicacao.id }}" name="conteudo" maxlength="1500" required></textarea>
-                                <button type="submit">Comentar</button>
-                            </form>
-                        {% else %}
-                            <a href="{{ url_for('login') }}">Entre para comentar</a>
-                        {% endif %}
-                    </article>
-                {% endfor %}
-            {% endif %}
-        </section>
-    </main>
-</body>
-</html>
+                            <li class="comment-item"><p>{{ comentario.conteudo }}</p><span class="comment-meta">{{ comentario.autor }} · {{ comentario.criado_em.strftime('%d/%m/%Y %H:%M') }}</span></li>
+                        {% else %}<li class="comment-meta">Sem comentários ainda.</li>{% endfor %}
+                    </ul>
+                    {% if session.get('usuario_id') %}
+                        <form class="comment-form" action="{{ url_for('create_comment', post_id=publicacao.id) }}" method="post">
+                            <label for="comentario-{{ publicacao.id }}">Adicionar comentário</label>
+                            <textarea id="comentario-{{ publicacao.id }}" name="conteudo" maxlength="1500" required placeholder="Escreva um comentário..."></textarea>
+                            <button class="button--small" type="submit">Comentar</button>
+                        </form>
+                    {% else %}<p class="form-footnote"><a href="{{ url_for('login') }}">Entre para comentar</a></p>{% endif %}
+                </article>
+            {% endfor %}
+        {% endif %}
+    </section>
+{% endblock %}

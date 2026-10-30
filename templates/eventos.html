@@ -1,44 +1,32 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Eventos | IF Clubes</title>
-</head>
-<body>
-    <main>
-        <h1>Eventos</h1>
-        <p><a href="{{ url_for('index') }}">Voltar ao início</a></p>
+{% extends "base.html" %}
 
-        {% if error_message %}
-            <p role="alert">{{ error_message }}</p>
-        {% elif not eventos %}
-            <p>Ainda não há eventos cadastrados.</p>
-        {% else %}
+{% block title %}Eventos | IF Clubes{% endblock %}
+
+{% block content %}
+    <header class="page-heading">
+        <div><span class="eyebrow">IFRN · CAMPUS CEARÁ-MIRIM</span><h1>Eventos</h1><p>Encontros e atividades dos clubes do campus.</p></div>
+        {% if session.get('tipo') == 'responsavel' %}<a class="button button--green" href="{{ url_for('create_event') }}">Cadastrar evento</a>{% endif %}
+    </header>
+    {% if error_message %}
+        <p class="alert" role="alert">{{ error_message }}</p>
+    {% elif not eventos %}
+        <p class="empty-state">Ainda não há eventos cadastrados.</p>
+    {% else %}
+        <section class="event-grid" aria-label="Eventos cadastrados">
             {% for evento in eventos %}
-                <article>
+                <article class="event-card">
+                    <div class="event-card__meta"><span class="tag tag--coral">{{ evento.data_hora.strftime('%d/%m/%Y') }}</span><span class="tag tag--gold">{{ evento.total_confirmados }} presenças</span></div>
                     <h2>{{ evento.nome }}</h2>
-                    <p>{{ evento.descricao }}</p>
-                    <p>Clube: {{ evento.clube }}</p>
-                    <p>Data e horário: {{ evento.data_hora.strftime('%d/%m/%Y %H:%M') }}</p>
-                    <p>Local: {{ evento.local }}</p>
-                    <p>Presenças confirmadas: {{ evento.total_confirmados }}</p>
-                    {% if session.get('usuario_id') %}
-                        {% if evento.usuario_confirmou %}
-                            <form action="{{ url_for('cancel_event_presence', event_id=evento.id) }}" method="post">
-                                <button type="submit">Cancelar presença</button>
-                            </form>
-                        {% else %}
-                            <form action="{{ url_for('confirm_event_presence', event_id=evento.id) }}" method="post">
-                                <button type="submit">Confirmar presença</button>
-                            </form>
-                        {% endif %}
-                    {% else %}
-                        <a href="{{ url_for('login') }}">Entre para confirmar presença</a>
-                    {% endif %}
+                    <p class="event-card__description">{{ evento.descricao }}</p>
+                    <p class="event-card__facts"><span>Clube: {{ evento.clube }}</span><span>Horário: {{ evento.data_hora.strftime('%H:%M') }}</span><span>Local: {{ evento.local }}</span></p>
+                    <div class="event-card__actions">
+                        {% if session.get('usuario_id') %}
+                            {% if evento.usuario_confirmou %}<form action="{{ url_for('cancel_event_presence', event_id=evento.id) }}" method="post"><button class="button--small button--outline" type="submit">Cancelar presença</button></form>
+                            {% else %}<form action="{{ url_for('confirm_event_presence', event_id=evento.id) }}" method="post"><button class="button--small" type="submit">Confirmar presença</button></form>{% endif %}
+                        {% else %}<a class="button button--small button--green" href="{{ url_for('login') }}">Entrar para confirmar</a>{% endif %}
+                    </div>
                 </article>
             {% endfor %}
-        {% endif %}
-    </main>
-</body>
-</html>
+        </section>
+    {% endif %}
+{% endblock %}

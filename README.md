@@ -23,12 +23,6 @@ MYSQL_DATABASE=if_clubes
 SECRET_KEY=uma_chave_secreta_aleatoria
 ```
 
-Gere uma chave aleatória com `python -c "import secrets; print(secrets.token_hex(32))"`. No MySQL Workbench, abra e execute `schema.sql` para criar o banco `if_clubes`, usuários, clubes, membros, eventos, presenças, publicações e comentários. Execute novamente o script quando novas tabelas forem adicionadas; o comando preserva as tabelas já existentes.
-
-## Executar
-
-```powershell
-python app.py
-```
+Gere uma chave aleatória com `python -c "import secrets; print(secrets.token_hex(32))"`. No MySQL Workbench, abra e execute `schema.sql` para criar o banco `if_clubes`, usuários, clubes, membros, eventos, presenças, publicações e comentários.
 
 A página inicial ficará disponível em `http://127.0.0.1:5000`. O sistema oferece cadastro em `/cadastro`, login em `/login`, saída em `/logout`, busca, participação e gerenciamento dos próprios clubes em `/clubes`, publicações e comentários na página de cada clube, eventos e confirmação de presença em `/eventos`, cadastro de eventos para responsáveis em `/eventos/novo` e verificação da conexão com o banco em `/health/db`.

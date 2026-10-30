@@ -4,9 +4,9 @@ Aplicação Web em Flask com banco de dados MySQL.
 
 ## Preparar o ambiente
 
-No PowerShell, na pasta do projeto:
+No PowerShell ou cmd , na pasta do projeto:
 
-```powershell
+```
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt

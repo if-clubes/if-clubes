@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Eventos | IF Clubes</title>
+</head>
+<body>
+    <main>
+        <h1>Eventos</h1>
+        <p><a href="{{ url_for('index') }}">Voltar ao início</a></p>
+
+        {% if error_message %}
+            <p role="alert">{{ error_message }}</p>
+        {% elif not eventos %}
+            <p>Ainda não há eventos cadastrados.</p>
+        {% else %}
+            {% for evento in eventos %}
+                <article>
+                    <h2>{{ evento.nome }}</h2>
+                    <p>{{ evento.descricao }}</p>
+                    <p>Clube: {{ evento.clube }}</p>
+                    <p>Data e horário: {{ evento.data_hora.strftime('%d/%m/%Y %H:%M') }}</p>
+                    <p>Local: {{ evento.local }}</p>
+                    <p>Presenças confirmadas: {{ evento.total_confirmados }}</p>
+                    {% if session.get('usuario_id') %}
+                        {% if evento.usuario_confirmou %}
+                            <form action="{{ url_for('cancel_event_presence', event_id=evento.id) }}" method="post">
+                                <button type="submit">Cancelar presença</button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('confirm_event_presence', event_id=evento.id) }}" method="post">
+                                <button type="submit">Confirmar presença</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Entre para confirmar presença</a>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        {% endif %}
+    </main>
+</body>
+</html>

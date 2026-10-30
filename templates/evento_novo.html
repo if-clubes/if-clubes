@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastrar evento | IF Clubes</title>
+</head>
+<body>
+    <main>
+        <h1>Cadastrar evento</h1>
+
+        {% if error_message %}
+            <p role="alert">{{ error_message }}</p>
+        {% endif %}
+        {% if sem_clubes %}
+            <p>Você precisa cadastrar um clube antes de criar um evento.</p>
+            <p><a href="{{ url_for('create_club') }}">Cadastrar clube</a></p>
+        {% else %}
+            <form action="{{ url_for('create_event') }}" method="post">
+                <label for="nome">Nome do evento</label>
+                <input id="nome" name="nome" type="text" maxlength="120" value="{{ nome }}" required>
+
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" maxlength="5000" required>{{ descricao }}</textarea>
+
+                <label for="data_hora">Data e horário</label>
+                <input id="data_hora" name="data_hora" type="datetime-local" value="{{ data_hora }}" required>
+
+                <label for="local">Local</label>
+                <input id="local" name="local" type="text" maxlength="180" value="{{ local }}" required>
+
+                <label for="clube_id">Clube</label>
+                <select id="clube_id" name="clube_id" required>
+                    {% for clube in clubes %}
+                        <option value="{{ clube.id }}" {% if clube.id|string == clube_selecionado %}selected{% endif %}>{{ clube.nome }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Salvar evento</button>
+            </form>
+        {% endif %}
+
+        <p><a href="{{ url_for('list_events') }}">Voltar para eventos</a></p>
+    </main>
+</body>
+</html>

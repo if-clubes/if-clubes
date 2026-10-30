@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clubes | IF Clubes</title>
+</head>
+<body>
+    <main>
+        <h1>Clubes</h1>
+        <p><a href="{{ url_for('index') }}">Voltar ao início</a></p>
+
+        <form action="{{ url_for('list_clubs') }}" method="get">
+            <label for="q">Buscar clubes</label>
+            <input id="q" name="q" type="search" value="{{ termo }}" maxlength="120">
+
+            <label for="categoria">Categoria</label>
+            <select id="categoria" name="categoria">
+                <option value="">Todas</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria }}" {% if categoria == categoria_selecionada %}selected{% endif %}>{{ categoria }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Filtrar</button>
+            <a href="{{ url_for('list_clubs') }}">Limpar</a>
+        </form>
+
+        {% if error_message %}
+            <p role="alert">{{ error_message }}</p>
+        {% elif not clubes %}
+            {% if termo or categoria_selecionada %}
+                <p>Nenhum clube encontrado para esses filtros.</p>
+            {% else %}
+                <p>Ainda não há clubes cadastrados.</p>
+            {% endif %}
+        {% else %}
+            {% for clube in clubes %}
+                <article>
+                    <h2><a href="{{ url_for('club_detail', club_id=clube.id) }}">{{ clube.nome }}</a></h2>
+                    <p>{{ clube.descricao }}</p>
+                    <p>Categoria: {{ clube.categoria }}</p>
+                    <p>Local: {{ clube.local }}</p>
+                    <p>Encontros: {{ clube.horarios }}</p>
+                    <p>Responsável: {{ clube.responsavel }}</p>
+                    <p>Membros: {{ clube.total_membros }}</p>
+                    {% if session.get('usuario_id') == clube.responsavel_id %}
+                        <a href="{{ url_for('edit_club', club_id=clube.id) }}">Editar</a>
+                        <form action="{{ url_for('delete_club', club_id=clube.id) }}" method="post" onsubmit="return confirm('Tem certeza de que deseja excluir este clube?')">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    {% endif %}
+                    {% if session.get('usuario_id') %}
+                        {% if clube.usuario_participa %}
+                            <form action="{{ url_for('leave_club', club_id=clube.id) }}" method="post">
+                                <button type="submit">Sair do clube</button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('join_club', club_id=clube.id) }}" method="post">
+                                <button type="submit">Participar</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Entre para participar</a>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        {% endif %}
+    </main>
+</body>
+</html>

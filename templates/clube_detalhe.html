@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ clube.nome }} | IF Clubes</title>
+</head>
+<body>
+    <main>
+        <p><a href="{{ url_for('list_clubs') }}">Voltar para clubes</a></p>
+        <h1>{{ clube.nome }}</h1>
+        <p>{{ clube.descricao }}</p>
+        <p>Categoria: {{ clube.categoria }}</p>
+        <p>Local: {{ clube.local }}</p>
+        <p>Encontros: {{ clube.horarios }}</p>
+        <p>Responsável: {{ clube.responsavel }}</p>
+
+        <section>
+            <h2>Publicações</h2>
+            {% if session.get('usuario_id') == clube.responsavel_id %}
+                <form action="{{ url_for('create_post', club_id=clube.id) }}" method="post">
+                    <label for="conteudo-publicacao">Nova publicação</label>
+                    <textarea id="conteudo-publicacao" name="conteudo" maxlength="5000" required></textarea>
+                    <button type="submit">Publicar</button>
+                </form>
+            {% endif %}
+
+            {% if not publicacoes %}
+                <p>Ainda não há publicações neste clube.</p>
+            {% else %}
+                {% for publicacao in publicacoes %}
+                    <article>
+                        <p>{{ publicacao.conteudo }}</p>
+                        <p>Por {{ publicacao.autor }} em {{ publicacao.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+
+                        <h3>Comentários</h3>
+                        {% for comentario in comentarios_por_publicacao[publicacao.id] %}
+                            <p>{{ comentario.conteudo }}</p>
+                            <p>Por {{ comentario.autor }} em {{ comentario.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+                        {% else %}
+                            <p>Sem comentários.</p>
+                        {% endfor %}
+
+                        {% if session.get('usuario_id') %}
+                            <form action="{{ url_for('create_comment', post_id=publicacao.id) }}" method="post">
+                                <label for="comentario-{{ publicacao.id }}">Adicionar comentário</label>
+                                <textarea id="comentario-{{ publicacao.id }}" name="conteudo" maxlength="1500" required></textarea>
+                                <button type="submit">Comentar</button>
+                            </form>
+                        {% else %}
+                            <a href="{{ url_for('login') }}">Entre para comentar</a>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

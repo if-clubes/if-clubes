@@ -12,7 +12,7 @@
                 <div class="field field--wide"><label for="descricao">Descrição</label><textarea id="descricao" name="descricao" maxlength="5000" required>{{ descricao }}</textarea></div>
                 <div class="field"><label for="categoria">Categoria</label><input id="categoria" name="categoria" type="text" maxlength="80" value="{{ categoria }}" required></div>
                 <div class="field"><label for="local">Local dos encontros</label><input id="local" name="local" type="text" maxlength="180" value="{{ local }}" required></div>
-                <div class="field field--wide"><label for="horarios">Horários dos encontros</label><input id="horarios" name="horarios" type="text" maxlength="180" value="{{ horarios }}" required></div>
+                <div class="field field--wide"><label for="horarios">Horários dos encontros</label><input id="horarios" name="horarios" type="time" maxlength="180" value="{{ horarios }}" required></div>
                 <div class="form-actions field--wide"><button type="submit">{{ 'Salvar alterações' if clube_id else 'Salvar clube' }}</button><a class="button button--quiet" href="{{ url_for('list_clubs') }}">Cancelar</a></div>
             </form>
         </div>

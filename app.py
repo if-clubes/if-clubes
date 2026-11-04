@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-load_dotenv()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or os.urandom(32)
@@ -14,11 +13,11 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or os.urandom(32)
 
 def get_db_connection():
     return mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST", "localhost"),
-        port=int(os.getenv("MYSQL_PORT", "3306")),
-        user=os.getenv("MYSQL_USER", "root"),
-        password=os.getenv("MYSQL_PASSWORD", ""),
-        database=os.getenv("MYSQL_DATABASE", "if_clubes"),
+        host="localhost",
+        port=3306,
+        user="root",
+        password="labinfo",
+        database="if_clubes",
         connection_timeout=3,
     )
 
